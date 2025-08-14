@@ -12,7 +12,7 @@
   </section>
 </main>
 <script type="module">
-import {api} from './js/api.js';
+import {api} from './static/api.js';
 import {startCamera,captureFrame} from './js/camera.js';
 const v=document.getElementById('v'); const out=document.getElementById('out');
 startCamera(v).catch(console.error);
@@ -26,3 +26,4 @@ document.getElementById('searchBtn').onclick = async ()=>{
 };
 </script>
 </body></html>
+
