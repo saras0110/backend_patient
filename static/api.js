@@ -1,5 +1,5 @@
 // CHANGE THIS after deploying backend on Render:
-const BACKEND = "https://hms-face-backend.onrender.com";
+const BACKEND = "https://backend-patient.onrender.com";
 
 export async function api(path, opts = {}) {
   const token = localStorage.getItem("token");
@@ -16,3 +16,4 @@ export async function api(path, opts = {}) {
 
 export function setToken(t){ localStorage.setItem("token", t); }
 export function clearToken(){ localStorage.removeItem("token"); }
+
