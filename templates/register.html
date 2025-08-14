@@ -1,0 +1,48 @@
+<!DOCTYPE html><html><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Register Staff</title>
+<link rel="stylesheet" href="styles.css">
+</head><body>
+<header><h2>Register Staff</h2></header>
+<main class="container">
+  <form id="regForm" class="panel">
+    <input id="name" placeholder="Full Name" required />
+    <input id="email" placeholder="Email" required />
+    <input id="password" placeholder="Password" type="password" required />
+    <select id="role">
+      <option value="doctor">Doctor</option>
+      <option value="receptionist">Receptionist</option>
+      <option value="admin">Admin</option>
+    </select>
+    <details><summary>Attach Face (optional)</summary>
+      <video id="v" autoplay playsinline></video>
+      <button type="button" id="cap">Capture Face</button>
+      <span id="capMsg"></span>
+    </details>
+    <button>Register</button>
+  </form>
+</main>
+<script type="module">
+import {api} from './js/api.js';
+import {startCamera, captureFrame} from './js/camera.js';
+const v = document.getElementById('v'); let faceBlob=null;
+startCamera(v).catch(()=>{}); // optional
+document.getElementById('cap').onclick = async ()=>{
+  faceBlob = await captureFrame(v);
+  document.getElementById('capMsg').textContent = 'Face captured ✔';
+}
+document.getElementById('regForm').onsubmit = async (ev)=>{
+  ev.preventDefault();
+  const fd = new FormData();
+  fd.append('name', document.getElementById('name').value);
+  fd.append('email', document.getElementById('email').value);
+  fd.append('password', document.getElementById('password').value);
+  fd.append('role', document.getElementById('role').value);
+  if (faceBlob) fd.append('face', faceBlob, 'face.jpg');
+  try{
+    await api('/api/register_user', {method:'POST', body: fd});
+    alert('Registered! Now login.'); location.href='login.html';
+  }catch(e){ alert(e.message); }
+};
+</script>
+</body></html>

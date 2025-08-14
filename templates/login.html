@@ -1,0 +1,50 @@
+<!DOCTYPE html><html><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Login</title>
+<link rel="stylesheet" href="styles.css">
+</head><body>
+<header><h2>Login</h2></header>
+<main class="container">
+  <section class="panel">
+    <h3>Face Login</h3>
+    <video id="v" autoplay playsinline></video>
+    <div><button id="faceBtn">Login with Face</button></div>
+    <p class="hint">If face not detected or not recognized, use password login below.</p>
+  </section>
+  <section class="panel">
+    <h3>Password Login</h3>
+    <form id="pwdForm">
+      <input placeholder="Email" id="email" required />
+      <input placeholder="Password" id="password" type="password" required />
+      <button>Login</button>
+    </form>
+  </section>
+</main>
+<script type="module">
+import {api,setToken} from './js/api.js';
+import {startCamera, captureFrame} from './js/camera.js';
+
+const v = document.getElementById('v');
+startCamera(v).catch(console.error);
+
+document.getElementById('faceBtn').onclick = async ()=>{
+  try{
+    const blob = await captureFrame(v);
+    const fd = new FormData(); fd.append('img', blob, 'frame.jpg');
+    const res = await api('/api/login_face', { method:'POST', body: fd });
+    setToken(res.token); alert('Logged in as '+res.name+' (role: '+res.role+')'); location.href='dashboard.html';
+  }catch(e){ alert(e.message); }
+};
+
+document.getElementById('pwdForm').onsubmit = async (ev)=>{
+  ev.preventDefault();
+  try{
+    const res = await api('/api/login_password', {method:'POST', body: JSON.stringify({
+      email: document.getElementById('email').value.trim(),
+      password: document.getElementById('password').value
+    })});
+    setToken(res.token); alert('Logged in as '+res.name+' (role: '+res.role+')'); location.href='dashboard.html';
+  }catch(e){ alert(e.message); }
+};
+</script>
+</body></html>

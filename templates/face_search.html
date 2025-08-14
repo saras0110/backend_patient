@@ -1,0 +1,28 @@
+<!DOCTYPE html><html><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Face Search</title>
+<link rel="stylesheet" href="styles.css">
+</head><body>
+<header><h2>Face Search Patient</h2></header>
+<main class="container">
+  <section class="panel">
+    <video id="v" autoplay playsinline></video>
+    <button id="searchBtn">Search by Face</button>
+    <pre id="out"></pre>
+  </section>
+</main>
+<script type="module">
+import {api} from './js/api.js';
+import {startCamera,captureFrame} from './js/camera.js';
+const v=document.getElementById('v'); const out=document.getElementById('out');
+startCamera(v).catch(console.error);
+document.getElementById('searchBtn').onclick = async ()=>{
+  try{
+    const blob = await captureFrame(v);
+    const fd = new FormData(); fd.append('img', blob, 'frame.jpg');
+    const r = await api('/api/patient_search_face', {method:'POST', body: fd});
+    out.textContent = JSON.stringify(r, null, 2);
+  }catch(e){ out.textContent = e.message; }
+};
+</script>
+</body></html>

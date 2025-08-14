@@ -1,0 +1,84 @@
+<!DOCTYPE html><html><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Patients</title>
+<link rel="stylesheet" href="styles.css">
+</head><body>
+<header><h2>Patients</h2></header>
+<main class="container grid-2">
+  <section class="panel">
+    <h3>Add Patient</h3>
+    <form id="addForm">
+      <input id="pname" placeholder="Name" required/>
+      <input id="age" placeholder="Age" type="number"/>
+      <input id="gender" placeholder="Gender"/>
+      <input id="phone" placeholder="Phone"/>
+      <button>Add</button>
+    </form>
+  </section>
+  <section class="panel">
+    <h3>Patients List</h3>
+    <input id="q" placeholder="Search by name"/>
+    <button id="refresh">Refresh</button>
+    <ul id="list"></ul>
+  </section>
+  <section class="panel">
+    <h3>Attach Face to Selected</h3>
+    <p id="sel">Selected: none</p>
+    <video id="v" autoplay playsinline></video>
+    <button id="saveFace">Save Face</button>
+  </section>
+  <section class="panel">
+    <h3>Patient Detail</h3>
+    <div id="detail"></div>
+    <form id="trForm">
+      <input id="dx" placeholder="Diagnosis"/>
+      <input id="rx" placeholder="Prescription"/>
+      <input id="notes" placeholder="Notes"/>
+      <button>Add Treatment</button>
+      <a id="pdf" target="_blank">Download PDF</a>
+    </form>
+  </section>
+</main>
+<script type="module">
+import {api} from './js/api.js';
+import {startCamera, captureFrame} from './js/camera.js';
+const list = document.getElementById('list'); let selId=null;
+const v = document.getElementById('v'); startCamera(v).catch(()=>{});
+async function load(){
+  const items = (await api('/api/patients?q='+encodeURIComponent(document.getElementById('q').value||''))).items;
+  list.innerHTML = ''; items.forEach(p=>{
+    const li = document.createElement('li');
+    li.textContent = `${p.id}. ${p.name} ${p.emergency?'[EMERGENCY]':''}`;
+    li.onclick = ()=> select(p.id);
+    list.appendChild(li);
+  });
+}
+async function select(id){
+  selId = id; document.getElementById('sel').textContent = 'Selected: '+id;
+  const r = await api('/api/patients/'+id);
+  document.getElementById('detail').innerHTML = `<pre>${JSON.stringify(r,null,2)}</pre>`;
+  document.getElementById('pdf').href = `${BACKEND}/api/patients/${id}/report.pdf`;
+}
+document.getElementById('refresh').onclick = load;
+document.getElementById('addForm').onsubmit = async (ev)=>{
+  ev.preventDefault();
+  await api('/api/patients', {method:'POST', body: JSON.stringify({
+    name: pname.value, age: parseInt(age.value||0)||null, gender: gender.value||null, phone: phone.value||null
+  })}); await load();
+};
+document.getElementById('saveFace').onclick = async ()=>{
+  if(!selId) return alert('Select a patient first');
+  const blob = await captureFrame(v);
+  const fd = new FormData(); fd.append('img', blob, 'face.jpg');
+  await api('/api/patients/'+selId+'/face', {method:'POST', body: fd});
+  alert('Face saved'); await select(selId);
+};
+document.getElementById('trForm').onsubmit = async (ev)=>{
+  ev.preventDefault(); if(!selId) return alert('Select patient');
+  await api('/api/patients/'+selId+'/treatments', {method:'POST', body: JSON.stringify({
+    diagnosis: dx.value, prescription: rx.value, notes: notes.value
+  })}); await select(selId);
+};
+load();
+</script>
+</body></html>

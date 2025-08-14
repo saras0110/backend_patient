@@ -1,0 +1,20 @@
+<!DOCTYPE html><html><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Dashboard</title>
+<link rel="stylesheet" href="styles.css">
+</head><body>
+<header><h2>Dashboard</h2> <nav><a href="patient.html">Patients</a> <a href="face_search.html">Face Search</a></nav></header>
+<main class="container">
+  <div class="panel">
+    <h3>Who am I</h3>
+    <pre id="me"></pre>
+  </div>
+</main>
+<script type="module">
+import {api} from './js/api.js';
+(async ()=>{
+  try{ document.getElementById('me').textContent = JSON.stringify(await api('/api/whoami'), null, 2); }
+  catch(e){ alert('Please login first'); location.href='login.html'; }
+})();
+</script>
+</body></html>

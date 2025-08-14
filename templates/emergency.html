@@ -1,0 +1,33 @@
+<!DOCTYPE html><html><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Emergency Entry</title>
+<link rel="stylesheet" href="styles.css">
+</head><body>
+<header><h2>Emergency Patient Entry (No Login)</h2></header>
+<main class="container">
+  <section class="panel">
+    <input id="name" placeholder="Patient Name" required />
+    <input id="phone" placeholder="Phone" />
+    <video id="v" autoplay playsinline></video>
+    <button id="save">Create Emergency Record</button>
+    <pre id="out"></pre>
+  </section>
+</main>
+<script type="module">
+import {api} from './js/api.js';
+import {startCamera,captureFrame} from './js/camera.js';
+const v=document.getElementById('v'); const out=document.getElementById('out');
+startCamera(v).catch(()=>{});
+document.getElementById('save').onclick = async ()=>{
+  const fd = new FormData();
+  fd.append('name', document.getElementById('name').value);
+  fd.append('phone', document.getElementById('phone').value);
+  try{
+    const blob = await captureFrame(v);
+    fd.append('img', blob, 'face.jpg');
+  }catch(_){}
+  try{ out.textContent = JSON.stringify(await api('/api/emergency_add',{method:'POST', body:fd}), null, 2); }
+  catch(e){ out.textContent = e.message; }
+};
+</script>
+</body></html>
