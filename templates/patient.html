@@ -40,8 +40,8 @@
   </section>
 </main>
 <script type="module">
-import {api} from './js/api.js';
-import {startCamera, captureFrame} from './js/camera.js';
+import {api} from './static/api.js';
+import {startCamera, captureFrame} from './static/camera.js';
 const list = document.getElementById('list'); let selId=null;
 const v = document.getElementById('v'); startCamera(v).catch(()=>{});
 async function load(){
@@ -82,3 +82,4 @@ document.getElementById('trForm').onsubmit = async (ev)=>{
 load();
 </script>
 </body></html>
+
