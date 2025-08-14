@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: hms-face-backend
+    env: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn main:app --host 0.0.0.0 --port 10000"
+    envVars:
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_EMAIL
+        value: admin@clinic.local
+      - key: ADMIN_PASSWORD
+        value: Admin@123
+      - key: BASE_URL
+        value: https://hms-face-backend.onrender.com
