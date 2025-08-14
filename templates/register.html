@@ -41,9 +41,10 @@ document.getElementById('regForm').onsubmit = async (ev)=>{
   if (faceBlob) fd.append('face', faceBlob, 'face.jpg');
   try{
     await api('/api/register_user', {method:'POST', body: fd});
-    alert('Registered! Now login.'); location.href='login.html';
+    alert('Registered! Now login.'); location.href='https://backend-patient.onrender.com/login.html';
   }catch(e){ alert(e.message); }
 };
 </script>
 </body></html>
+
 
