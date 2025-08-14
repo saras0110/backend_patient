@@ -32,7 +32,7 @@ document.getElementById('faceBtn').onclick = async ()=>{
     const blob = await captureFrame(v);
     const fd = new FormData(); fd.append('img', blob, 'frame.jpg');
     const res = await api('/api/login_face', { method:'POST', body: fd });
-    setToken(res.token); alert('Logged in as '+res.name+' (role: '+res.role+')'); location.href='dashboard.html';
+    setToken(res.token); alert('Logged in as '+res.name+' (role: '+res.role+')'); location.href='https://backend-patient.onrender.com/dashboard.html';
   }catch(e){ alert(e.message); }
 };
 
@@ -43,10 +43,11 @@ document.getElementById('pwdForm').onsubmit = async (ev)=>{
       email: document.getElementById('email').value.trim(),
       password: document.getElementById('password').value
     })});
-    setToken(res.token); alert('Logged in as '+res.name+' (role: '+res.role+')'); location.href='dashboard.html';
+    setToken(res.token); alert('Logged in as '+res.name+' (role: '+res.role+')'); location.href='https://backend-patient.onrender.com/dashboard.html';
   }catch(e){ alert(e.message); }
 };
 </script>
 </body></html>
+
 
 
