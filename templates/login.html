@@ -22,7 +22,7 @@
 </main>
 <script type="module">
 import {api,setToken} from './static/api.js';
-import {startCamera, captureFrame} from './js/camera.js';
+import {startCamera, captureFrame} from './static/camera.js';
 
 const v = document.getElementById('v');
 startCamera(v).catch(console.error);
@@ -48,4 +48,5 @@ document.getElementById('pwdForm').onsubmit = async (ev)=>{
 };
 </script>
 </body></html>
+
 
