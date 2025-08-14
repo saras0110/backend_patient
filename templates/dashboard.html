@@ -11,10 +11,11 @@
   </div>
 </main>
 <script type="module">
-import {api} from './js/api.js';
+import {api} from './static/api.js';
 (async ()=>{
   try{ document.getElementById('me').textContent = JSON.stringify(await api('/api/whoami'), null, 2); }
   catch(e){ alert('Please login first'); location.href='login.html'; }
 })();
 </script>
 </body></html>
+
